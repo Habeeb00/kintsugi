@@ -4,11 +4,19 @@ import Lenis from 'lenis';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// ── Force scroll to top before anything else ────────
+document.documentElement.scrollTop = 0;
+document.body.scrollTop = 0;
+
 // ── Lenis smooth scroll ─────────────────────────────
 const lenis = new Lenis({
   duration: 1.6,
   easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  syncTouch: true,
 });
+
+// Reset lenis internal position to 0 immediately
+lenis.scrollTo(0, { immediate: true });
 
 (function raf(time) { lenis.raf(time); requestAnimationFrame(raf); })();
 lenis.on('scroll', ScrollTrigger.update);
@@ -176,10 +184,62 @@ function bindSegmentToTrigger(segKey, triggerSelector) {
   });
 }
 
+// ── Fall: auto-play on first scroll (not scrubbed) ──
+let fallPlayed = false;
+let fallReady  = false;   // armed inside preloadAll().then(), not on a blind timeout
+
+function playFall() {
+  return new Promise(resolve => {
+    const total = SEGMENTS.find(s => s.key === 'fall').count;
+    let frameIdx = 0;
+    let last = 0;
+
+    // Variable speed — slow start, faster as it falls
+    function fps(i) {
+      if (i < 20) return 10;   // hanging, suspended
+      if (i < 60) return 18;   // falling
+      return 22;               // impact
+    }
+
+    function step(ts) {
+      if (ts - last >= 1000 / fps(frameIdx)) {
+        last = ts;
+        drawFrame('fall', frameIdx);
+        frameIdx++;
+        if (frameIdx >= total) { resolve(); return; }
+      }
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+function onFirstScroll(e) {
+  // Only a real downward scroll — ignore upward or non-scroll events
+  const down = e.type === 'wheel' ? e.deltaY > 0
+             : e.type === 'touchstart';
+  if (!down || !fallReady || fallPlayed) return;
+
+  fallPlayed = true;
+  window.removeEventListener('wheel',      onFirstScroll);
+  window.removeEventListener('touchstart', onFirstScroll);
+  e.preventDefault();
+  lenis.stop();
+  titleCard?.classList.add('is-out');
+  cue?.classList.add('hidden');
+
+  playFall().then(() => {
+    setTimeout(() => {
+      lenis.start();
+      const silenceEl = document.querySelector('[data-frames="silence"]');
+      if (silenceEl) lenis.scrollTo(silenceEl, { duration: 0.01, force: true });
+    }, 500);
+  });
+}
+
 // ── Wire scroll triggers AFTER first frame loads ────
 preloadAll().then(() => {
-  // Bind each frame-segment to its scroll region
-  bindSegmentToTrigger('fall',    '[data-frames="fall"]');
+  // Fall is triggered, not scrubbed — only bind silence + repair
   bindSegmentToTrigger('silence', '[data-frames="silence"]');
   bindSegmentToTrigger('repair',  '[data-frames="repair"]');
 
@@ -194,14 +254,19 @@ preloadAll().then(() => {
     }, 1500);
   }
 
-  // First frame
-  drawFrame('fall', 0);
-
-  // Force scroll to top
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
-
+  lenis.scrollTo(0, { immediate: true });
   ScrollTrigger.refresh();
+
+  // Draw suspended bowl AFTER refresh so it overrides any trigger state
+  requestAnimationFrame(() => drawFrame('fall', 0));
+
+  // Arm first-scroll 600ms after load — filters out any automated events
+  setTimeout(() => {
+    fallReady = true;
+    window.addEventListener('wheel',      onFirstScroll, { passive: false });
+    window.addEventListener('touchstart', onFirstScroll, { passive: false });
+  }, 600);
 });
 
 // ── Line reveals via IntersectionObserver ───────────
@@ -224,10 +289,4 @@ function showTitleCard() {
   setTimeout(() => titleCard.classList.add('is-in'), 120);
 }
 
-lenis.on('scroll', ({ scroll }) => {
-  if (!scrolled && scroll > 30) {
-    scrolled = true;
-    titleCard?.classList.add('is-out');
-    cue?.classList.add('hidden');
-  }
-});
+// title card + cue are dismissed inside onFirstScroll

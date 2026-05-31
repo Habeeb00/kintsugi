@@ -58,9 +58,9 @@ body {
   position: relative;
 }
 
-/* The silent first act holds the suspended bowl, then the fall, then the shattered state */
+/* Act I — needs to be tall enough that silence section is below viewport at scroll=0 */
 .act--silent {
-  min-height: 240vh;
+  min-height: 180vh;
 }
 
 .act--narrative {

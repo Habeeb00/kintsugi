@@ -8,7 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/style.css" />
-  <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
 </head>
 <body>
 
@@ -36,8 +39,8 @@
   <!-- Scroll container — text is layered over the canvas -->
   <div id="scroll-container">
 
-    <!-- Act I — Presence. The whole bowl, suspended. (First frame held by long section) -->
-    <section class="act act--silent" data-frames="fall"></section>
+    <!-- Act I — Presence. Bowl sits here. Fall is triggered by first scroll, not scrubbed. -->
+    <section class="act act--silent"></section>
 
     <!-- Act II — The Fall. The same 'fall' frames continue scrubbing here. -->
     <!-- (data-frames continues from previous section so we make this one bind to fall too,
