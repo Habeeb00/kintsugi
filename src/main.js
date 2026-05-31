@@ -183,12 +183,15 @@ preloadAll().then(() => {
   bindSegmentToTrigger('silence', '[data-frames="silence"]');
   bindSegmentToTrigger('repair',  '[data-frames="repair"]');
 
-  // Dismiss the loading screen
+  // Dismiss loading, then reveal title card
   const loading = document.getElementById('loading');
   if (loading) {
     loading.style.transition = 'opacity 1.4s ease';
     loading.style.opacity = '0';
-    setTimeout(() => { loading.style.display = 'none'; }, 1500);
+    setTimeout(() => {
+      loading.style.display = 'none';
+      showTitleCard();
+    }, 1500);
   }
 
   // First frame
@@ -210,12 +213,21 @@ const io = new IntersectionObserver(
 );
 document.querySelectorAll('.line').forEach(l => io.observe(l));
 
-// ── Subtle scroll cue fades on first scroll ─────────
+// ── Title card — slides in on enter, out on first scroll ──
+const titleCard = document.getElementById('title-card');
 const cue = document.querySelector('.scroll-cue');
 let scrolled = false;
+
+function showTitleCard() {
+  if (!titleCard) return;
+  // small delay so it feels like a reveal, not a flash
+  setTimeout(() => titleCard.classList.add('is-in'), 120);
+}
+
 lenis.on('scroll', ({ scroll }) => {
-  if (!scrolled && scroll > 40) {
+  if (!scrolled && scroll > 30) {
     scrolled = true;
+    titleCard?.classList.add('is-out');
     cue?.classList.add('hidden');
   }
 });
