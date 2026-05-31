@@ -1,0 +1,246 @@
+/* ── Design Tokens ──────────────────────────────────── */
+:root {
+  --bg:        #F5F0E8;
+  --ceramic:   #DDD3C5;
+  --gold:      #C9A44A;
+  --gold-glow: #E8C06A;
+  --text:      #2A2218;
+  --text-soft: #5A5048;
+  --text-mute: #8C7C6E;
+  --accent:    #8C7355;
+
+  --font-body:     'Cormorant Garamond', Georgia, serif;
+  --font-japanese: 'Shippori Mincho', serif;
+
+  --ease-silk: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* ── Reset ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 18px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── Fixed Canvas — the bowl footage plays here ───── */
+#frame-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--bg);
+}
+
+/* ── Scroll container ───────────────────────────────── */
+#scroll-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Acts ───────────────────────────────────────────── */
+.act {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12vh 8vw;
+  position: relative;
+}
+
+/* The silent first act holds the suspended bowl, then the fall, then the shattered state */
+.act--silent {
+  min-height: 240vh;
+}
+
+.act--narrative {
+  min-height: 110vh;
+}
+
+/* The repair takes its time — gold flows, pieces rejoin */
+.act--repair {
+  min-height: 200vh;
+}
+
+.act--closing {
+  min-height: 150vh;
+  padding-bottom: 22vh;
+}
+
+/* ── Lines — one thought at a time, like subtitles ── */
+.line {
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  line-height: 1.85;
+  letter-spacing: 0.005em;
+  color: var(--text-soft);
+  text-align: center;
+  max-width: 560px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 1.4s var(--ease-silk),
+    transform 1.4s var(--ease-silk);
+  font-weight: 300;
+}
+
+.line.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Vertical breathing between consecutive lines */
+.line--space  { margin-top: 2.6rem; }
+
+/* Quieter, more reflective lines */
+.line--quiet {
+  color: var(--text-mute);
+  font-style: italic;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+}
+
+/* Whisper — very small, very still */
+.line--whisper {
+  margin-top: 3.5rem;
+  color: var(--accent);
+  font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+  letter-spacing: 0.03em;
+}
+
+.line--whisper .japanese {
+  font-family: var(--font-japanese);
+  font-size: 1.4em;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  margin-right: 0.3em;
+}
+
+/* Italic — wabi-sabi, kintsugi names */
+.line em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+/* The first line that emerges from silence */
+.line--enter {
+  font-size: clamp(1.3rem, 2.4vw, 1.8rem);
+  color: var(--text);
+}
+
+/* The very last whisper of the piece */
+.line--final {
+  margin-top: 6rem;
+  text-align: center;
+}
+
+.line--final .japanese {
+  font-family: var(--font-japanese);
+  font-size: 2.2rem;
+  color: var(--gold);
+  letter-spacing: 0.12em;
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+.line--final .muted {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+}
+
+/* Japanese characters in any line */
+.japanese {
+  font-family: var(--font-japanese);
+}
+
+/* Closing act — center the kanji block at the top */
+.act--closing .line--quiet .japanese {
+  display: block;
+  font-size: 2rem;
+  color: var(--text-soft);
+  letter-spacing: 0.2em;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Loading screen ─────────────────────────────────── */
+#loading {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.loading__kanji {
+  font-family: var(--font-japanese);
+  font-size: 3rem;
+  color: var(--text);
+  letter-spacing: 0.1em;
+  opacity: 0.85;
+}
+
+.loading__bar-wrap {
+  width: 160px;
+  height: 1px;
+  background: rgba(140, 115, 85, 0.18);
+  overflow: hidden;
+}
+
+.loading__bar {
+  width: 100%;
+  height: 100%;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.15s linear;
+}
+
+.loading__text {
+  font-family: var(--font-japanese);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--text-mute);
+}
+
+/* ── Subtle scroll cue — barely there ──────────────── */
+.scroll-cue {
+  position: fixed;
+  bottom: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(to bottom, transparent, var(--gold-glow), transparent);
+  opacity: 0;
+  animation: cueDrip 3.5s ease-in-out 2s infinite;
+  pointer-events: none;
+}
+
+.scroll-cue.hidden { animation: none; opacity: 0; }
+
+@keyframes cueDrip {
+  0%, 100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  50%      { opacity: 0.6; transform: translateX(-50%) translateY(10px); }
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .act { padding: 10vh 6vw; }
+  .line { font-size: 1.1rem; }
+}

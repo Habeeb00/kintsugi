@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kintsugi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+  <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
+</head>
+<body>
+
+  <!-- Loading screen with real progress bar -->
+  <div id="loading">
+    <div class="loading__kanji">金継ぎ</div>
+    <div class="loading__bar-wrap">
+      <div id="loading-bar" class="loading__bar"></div>
+    </div>
+    <div id="loading-text" class="loading__text">0%</div>
+  </div>
+
+  <!-- Subtle scroll cue -->
+  <div class="scroll-cue"></div>
+
+  <!-- Frame canvas — the whole story renders here -->
+  <canvas id="frame-canvas"></canvas>
+
+  <!-- Scroll container — text is layered over the canvas -->
+  <div id="scroll-container">
+
+    <!-- Act I — Presence. The whole bowl, suspended. (First frame held by long section) -->
+    <section class="act act--silent" data-frames="fall"></section>
+
+    <!-- Act II — The Fall. The same 'fall' frames continue scrubbing here. -->
+    <!-- (data-frames continues from previous section so we make this one bind to fall too,
+         BUT with extra length so the scrub feels slow) -->
+
+    <!-- Act III — Something broke. (Silence frames begin) -->
+    <section class="act act--narrative" data-frames="silence">
+      <p class="line line--enter">
+        Something broke.
+      </p>
+    </section>
+
+    <!-- Act IV — Not loudly. -->
+    <section class="act act--narrative">
+      <p class="line">
+        Not loudly.
+      </p>
+      <p class="line line--space">
+        The way things break sometimes —<br />
+        without anyone noticing,<br />
+        not even you.
+      </p>
+    </section>
+
+    <!-- Act V — The repair. Gold flows. (Repair frames) -->
+    <section class="act act--narrative act--repair" data-frames="repair">
+      <p class="line">
+        In Japan, when a bowl breaks,<br />
+        they do not throw it away.
+      </p>
+      <p class="line line--space">
+        They mend the cracks with gold.
+      </p>
+      <p class="line line--whisper">
+        <span class="japanese">金継ぎ</span> — <em>kintsugi</em>.
+      </p>
+    </section>
+
+    <!-- Act VI — The return. Cracks remain, but golden. -->
+    <section class="act act--narrative">
+      <p class="line">
+        The bowl is not pretending to be unbroken.
+      </p>
+      <p class="line line--space">
+        It is showing you<br />
+        exactly where it broke,<br />
+        and exactly how it chose to stay.
+      </p>
+    </section>
+
+    <!-- Act VII — Wabi-sabi. Closing breath. -->
+    <section class="act act--narrative act--closing">
+      <p class="line line--quiet">
+        <span class="japanese">侘び寂び</span>
+      </p>
+      <p class="line">
+        The Japanese have a word<br />
+        for the beauty of imperfect things.
+      </p>
+      <p class="line line--space">
+        We were not built to be unbroken.<br />
+        We were built to survive the breaking —<br />
+        and carry our repairs as proof<br />
+        that we chose to stay.
+      </p>
+      <p class="line line--whisper line--final">
+        <span class="japanese">金継ぎ</span><br />
+        <span class="muted">golden joinery</span>
+      </p>
+    </section>
+
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
