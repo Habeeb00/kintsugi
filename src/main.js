@@ -28,27 +28,20 @@ gsap.ticker.lagSmoothing(0);
 // of scroll, which is how we slow the moment of impact, the gold glow, etc.
 const SEGMENTS = [
   {
-    key:    'fall',
-    count:  96,
-    holds:  [
-      { frame: 0,  hold: 100 },  // long contemplative beat on the suspended bowl
-      { frame: 95, hold: 50 },   // hold on the final scattered state
+    key:   'fall',
+    count: 176,   // 96 original + 80 duplicated end frames (scattered bowl held)
+    holds: [
+      { frame: 0,   hold: 100 }, // suspended bowl — long opening beat
+      { frame: 175, hold: 60 },  // shattered stillness at the end
     ],
   },
   {
-    key:    'silence',
-    count:  192,
-    holds:  [
-      { frame: 0,   hold: 30 },  // breathe in before motion
-      { frame: 191, hold: 80 },  // long stillness at the end
-    ],
-  },
-  {
-    key:    'repair',
-    count:  241,
-    holds:  [
-      { frame: 120, hold: 80 },  // dwell on the gold-glow mid-reassembly
-      { frame: 240, hold: 100 }, // hold the restored bowl
+    key:   'repair',
+    count: 321,   // 80 duplicated start frames + 241 original
+    holds: [
+      { frame: 80,  hold: 60 },  // first real movement — gentle dwell
+      { frame: 200, hold: 80 },  // gold glow mid-reassembly
+      { frame: 320, hold: 100 }, // final restored bowl
     ],
   },
 ];
@@ -246,32 +239,25 @@ function onFirstScroll(e) {
 
 // ── Wire scroll triggers AFTER first frame loads ────
 preloadAll().then(() => {
-  // Fall is triggered, not scrubbed — only bind silence + repair
-  bindSegmentToTrigger('silence', '[data-frames="silence"]');
-  bindSegmentToTrigger('repair',  '[data-frames="repair"]');
+  // Fall is triggered, not scrubbed — only bind repair
+  bindSegmentToTrigger('repair', '[data-frames="repair"]');
 
-  // As silence section enters: fade "Something broke." out first, then white overlay
+  // As repair section enters: text fades, white overlay dissolves, repair video scrubs in
   const sceneBreak     = document.getElementById('scene-break');
   const somethingBroke = document.getElementById('something-broke');
 
   ScrollTrigger.create({
-    trigger: '[data-frames="silence"]',
+    trigger: '[data-frames="repair"]',
     start:   'top 85%',
-    end:     'top 20%',
+    end:     'top 15%',
     scrub:   1,
     onUpdate(self) {
       const p = self.progress;
-      // Text fades out in first half
-      if (somethingBroke) {
-        somethingBroke.style.opacity = Math.max(0, 1 - p * 2.5);
-      }
-      // Overlay fades out through the full range
-      if (sceneBreak) {
-        sceneBreak.style.opacity = Math.max(0, 1 - p * 1.4);
-      }
+      if (somethingBroke) somethingBroke.style.opacity = Math.max(0, 1 - p * 3);
+      if (sceneBreak)     sceneBreak.style.opacity     = Math.max(0, 1 - p * 1.6);
     },
     onLeave() {
-      if (sceneBreak) sceneBreak.style.opacity = '0';
+      if (sceneBreak)     sceneBreak.style.opacity     = '0';
       if (somethingBroke) somethingBroke.style.opacity = '0';
     },
   });
