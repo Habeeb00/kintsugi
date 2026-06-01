@@ -15,7 +15,7 @@
 </head>
 <body>
 
-  <!-- Loading screen with real progress bar -->
+  <!-- Loading screen -->
   <div id="loading">
     <div class="loading__kanji">金継ぎ</div>
     <div class="loading__bar-wrap">
@@ -24,37 +24,33 @@
     <div id="loading-text" class="loading__text">0%</div>
   </div>
 
-  <!-- Title card — slides down on enter, fades on first scroll -->
+  <!-- Title card -->
   <div id="title-card">
     <span class="title-card__jp">金継ぎ</span>
-    <span class="title-card__en">the art of broken beauty</span>
   </div>
 
-  <!-- Subtle scroll cue -->
+  <!-- Scroll cue -->
   <div class="scroll-cue"></div>
 
-  <!-- Frame canvas — the whole story renders here -->
+  <!-- White scene-break overlay — appears after fall, fades as silence video enters -->
+  <div id="scene-break">
+    <p id="something-broke" class="break-line">Something broke.</p>
+  </div>
+
+  <!-- Frame canvas -->
   <canvas id="frame-canvas"></canvas>
 
-  <!-- Scroll container — text is layered over the canvas -->
+  <!-- Scroll container -->
   <div id="scroll-container">
 
-    <!-- Act I — Presence. Bowl sits here. Fall is triggered by first scroll, not scrubbed. -->
+    <!-- Act I — Suspended bowl. Fall triggered on first scroll. -->
     <section class="act act--silent"></section>
 
-    <!-- Act II — The Fall. The same 'fall' frames continue scrubbing here. -->
-    <!-- (data-frames continues from previous section so we make this one bind to fall too,
-         BUT with extra length so the scrub feels slow) -->
+    <!-- Act II — White moment + "Something broke." Provides scroll space after fall. -->
+    <section class="act act--break"></section>
 
-    <!-- Act III — Something broke. (Silence frames begin) -->
+    <!-- Act III — Silence video scrubs. "Not loudly..." -->
     <section class="act act--narrative" data-frames="silence">
-      <p class="line line--enter">
-        Something broke.
-      </p>
-    </section>
-
-    <!-- Act IV — Not loudly. -->
-    <section class="act act--narrative">
       <p class="line">
         Not loudly.
       </p>
@@ -65,7 +61,7 @@
       </p>
     </section>
 
-    <!-- Act V — The repair. Gold flows. (Repair frames) -->
+    <!-- Act IV — The repair. Gold flows. -->
     <section class="act act--narrative act--repair" data-frames="repair">
       <p class="line">
         In Japan, when a bowl breaks,<br />
@@ -79,7 +75,7 @@
       </p>
     </section>
 
-    <!-- Act VI — The return. Cracks remain, but golden. -->
+    <!-- Act V — The return. -->
     <section class="act act--narrative">
       <p class="line">
         The bowl is not pretending to be unbroken.
@@ -91,7 +87,7 @@
       </p>
     </section>
 
-    <!-- Act VII — Wabi-sabi. Closing breath. -->
+    <!-- Act VI — Wabi-sabi. Closing breath. -->
     <section class="act act--narrative act--closing">
       <p class="line line--quiet">
         <span class="japanese">侘び寂び</span>

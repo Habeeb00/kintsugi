@@ -173,6 +173,40 @@ body {
   margin-bottom: 1.5rem;
 }
 
+/* ── Scene break overlay — white screen after the fall ── */
+#scene-break {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 4;          /* above canvas (0), below title-card (50) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.break-line {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: clamp(1.3rem, 2.4vw, 1.8rem);
+  color: var(--text);
+  letter-spacing: 0.01em;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+
+.break-line.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Act II — scroll space for the white moment */
+.act--break {
+  min-height: 130vh;
+}
+
 /* ── Title card ─────────────────────────────────────── */
 #title-card {
   position: fixed;

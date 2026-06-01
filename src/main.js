@@ -229,11 +229,18 @@ function onFirstScroll(e) {
   cue?.classList.add('hidden');
 
   playFall().then(() => {
-    setTimeout(() => {
-      lenis.start();
-      const silenceEl = document.querySelector('[data-frames="silence"]');
-      if (silenceEl) lenis.scrollTo(silenceEl, { duration: 0.01, force: true });
-    }, 500);
+    const sceneBreak     = document.getElementById('scene-break');
+    const somethingBroke = document.getElementById('something-broke');
+
+    // Fade in white overlay over the shattered frame
+    sceneBreak.style.transition = 'opacity 1s ease';
+    sceneBreak.style.opacity    = '1';
+
+    // "Something broke." rises in after white fills
+    setTimeout(() => somethingBroke.classList.add('is-visible'), 800);
+
+    // Re-enable scroll — user scrolls forward naturally from here
+    setTimeout(() => lenis.start(), 1200);
   });
 }
 
@@ -242,6 +249,32 @@ preloadAll().then(() => {
   // Fall is triggered, not scrubbed — only bind silence + repair
   bindSegmentToTrigger('silence', '[data-frames="silence"]');
   bindSegmentToTrigger('repair',  '[data-frames="repair"]');
+
+  // As silence section enters: fade "Something broke." out first, then white overlay
+  const sceneBreak     = document.getElementById('scene-break');
+  const somethingBroke = document.getElementById('something-broke');
+
+  ScrollTrigger.create({
+    trigger: '[data-frames="silence"]',
+    start:   'top 85%',
+    end:     'top 20%',
+    scrub:   1,
+    onUpdate(self) {
+      const p = self.progress;
+      // Text fades out in first half
+      if (somethingBroke) {
+        somethingBroke.style.opacity = Math.max(0, 1 - p * 2.5);
+      }
+      // Overlay fades out through the full range
+      if (sceneBreak) {
+        sceneBreak.style.opacity = Math.max(0, 1 - p * 1.4);
+      }
+    },
+    onLeave() {
+      if (sceneBreak) sceneBreak.style.opacity = '0';
+      if (somethingBroke) somethingBroke.style.opacity = '0';
+    },
+  });
 
   // Dismiss loading, then reveal title card
   const loading = document.getElementById('loading');
